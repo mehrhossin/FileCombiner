@@ -1,5 +1,5 @@
 ﻿//================================================================================
-//Relative Path: FileSelectionForm.cs
+// Relative Path: FileSelectionForm.cs
 //================================================================================
 
 using System;
@@ -14,10 +14,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-
 namespace FileCombiner
 {
-
     public partial class FileSelectionForm : Form
     {
         public List<string> SelectedFiles { get; private set; }
@@ -45,10 +43,29 @@ namespace FileCombiner
 
         private void FileSelectionForm_Load(object sender, EventArgs e)
         {
+            ApplyStrings();
             LoadFiles(allFiles);
             RestoreSelectionState_FromFile();
             RestoreSelectionState();
             UpdateCounts();
+        }
+
+        // ─── اعمال رشته‌های زبان انتخابی روی UI ─────────────────────────────
+        private void ApplyStrings()
+        {
+            this.Text = AppStrings.FsfTitle;
+            groupBox1.Text = AppStrings.FsfGrpFiles;
+            groupBox2.Text = AppStrings.FsfGrpFilter;
+            label1.Text = AppStrings.FsfLblSearch;
+            btnSelectAll.Text = AppStrings.FsfBtnSelectAll;
+            btnDeselectAll.Text = AppStrings.FsfBtnDeselectAll;
+            btnOK.Text = AppStrings.FsfBtnOK;
+            btnCancel.Text = AppStrings.FsfBtnCancel;
+
+            // RTL فقط برای فارسی
+            bool isFa = AppStrings.Language == AppLanguage.Persian;
+            this.RightToLeft = isFa ? RightToLeft.Yes : RightToLeft.No;
+            this.RightToLeftLayout = isFa;
         }
 
         // ─── بارگذاری لیست (بدون دست زدن به _checkedPaths) ──────────────────
@@ -61,7 +78,7 @@ namespace FileCombiner
                 checkedListBoxFiles.Items.Add(file, false);
 
             checkedListBoxFiles.EndUpdate();
-            lblTotalFiles.Text = $"تعداد کل: {files.Count} فایل";
+            lblTotalFiles.Text = AppStrings.FsfLblTotal(files.Count);
         }
 
         // ─── اعمال _checkedPaths روی آیتم‌های نمایش‌داده‌شده ─────────────────
@@ -104,7 +121,6 @@ namespace FileCombiner
             }
         }
 
-
         // ─── وقتی کاربر تیک می‌زند یا برمی‌دارد ─────────────────────────────
         private void checkedListBoxFiles_ItemCheck(object sender, ItemCheckEventArgs e)
         {
@@ -125,8 +141,6 @@ namespace FileCombiner
         // ─── همگام‌سازی _checkedPaths با UI ──────────────────────────────────
         private void SyncCheckedPathsFromUI()
         {
-            // فقط آیتم‌های نمایش‌داده‌شده را آپدیت کن
-            // (آیتم‌های خارج از فیلتر دست‌نخورده می‌مانند)
             var visiblePaths = new HashSet<string>(
                 checkedListBoxFiles.Items.Cast<FileItemInfo>().Select(f => f.RelativePath));
 
@@ -173,8 +187,8 @@ namespace FileCombiner
                 .Where(f => _checkedPaths.Contains(f.RelativePath))
                 .Sum(f => f.Size);
 
-            lblSelectedFiles.Text =
-                $"انتخاب شده: {_checkedPaths.Count} فایل ({FormatFileSize(totalSize)})";
+            lblSelectedFiles.Text = AppStrings.FsfLblSelected(_checkedPaths.Count,
+                                        FormatFileSize(totalSize));
 
             btnOK.Enabled = _checkedPaths.Count > 0;
         }
@@ -192,7 +206,7 @@ namespace FileCombiner
                   ).ToList();
 
             LoadFiles(filtered);
-            RestoreSelectionState();   // ← تیک‌های قبلی را بازگردان
+            RestoreSelectionState();
             UpdateCounts();
         }
 
@@ -207,7 +221,7 @@ namespace FileCombiner
 
                 if (SelectedFiles.Count == 0)
                 {
-                    MessageBox.Show("لطفاً حداقل یک فایل را انتخاب کنید!", "هشدار",
+                    MessageBox.Show(AppStrings.FsfMsgSelectOne, AppStrings.WarningTitle,
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     e.Cancel = true;
                     return;

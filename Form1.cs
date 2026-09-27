@@ -1,4 +1,8 @@
-﻿using System.Text;
+﻿//================================================================================
+// Relative Path: Form1.cs
+//================================================================================
+
+using System.Text;
 
 namespace FileCombiner
 {
@@ -19,18 +23,96 @@ namespace FileCombiner
             rdoTxt.CheckedChanged += OutputFormat_Changed;
             rdoMd.CheckedChanged += OutputFormat_Changed;
             this.lblDropHere.AllowDrop = true;
-            // ✅ پر کردن ComboBox و انتخاب پیش‌فرض
+
+            // زبان پیش‌فرض
+            AppStrings.Language = AppLanguage.Persian;
+
+            // ✅ پر کردن ComboBox از AppStrings
             cmbClipboardMode.Items.Clear();
-            cmbClipboardMode.Items.Add("کپی فایل نهایی");   // index 0
-            cmbClipboardMode.Items.Add("کپی محتوا");         // index 1
+            cmbClipboardMode.Items.Add(AppStrings.CmbCopyFile);    // index 0
+            cmbClipboardMode.Items.Add(AppStrings.CmbCopyContent); // index 1
             cmbClipboardMode.SelectedIndex = 0;
 
             // حالت پیش‌فرض ورودی
             rdoInputFolder.Checked = true;
             UpdateInputModeUI();
+
+            ApplyStrings();
         }
 
-        // ─── پر کردن lstFolderFiles بعد از انتخاب پوشه ───────────────────────────
+        // ─── اعمال رشته‌های زبان انتخابی روی UI ─────────────────────────────
+        private void ApplyStrings()
+        {
+            // Window title
+            this.Text = AppStrings.AppTitle;
+
+            // GroupBoxes
+            groupBox1.Text = AppStrings.GrpInput;
+            groupBox2.Text = AppStrings.GrpSettings;
+            groupBox3.Text = AppStrings.GrpOutput;
+
+            // Input mode radios
+            rdoInputFolder.Text = AppStrings.RdoFolder;
+            rdoInputDrop.Text = AppStrings.RdoDrop;
+
+            // Folder panel
+            label1.Text = AppStrings.LblFolderPrompt;
+            btnBrowseFolder.Text = AppStrings.BtnBrowseFolder;
+
+            // Drop panel
+            lblDropHere.Text = AppStrings.LblDropHere;
+            btnClearDropList.Text = AppStrings.BtnClearDrop;
+
+            // Settings
+            label2.Text = AppStrings.LblExtension;
+            chkSearchSubfolders.Text = AppStrings.ChkSubfolders;
+            chkTree.Text = AppStrings.ChkTree;
+            chkHaderSumury.Text = AppStrings.ChkHeaderSummary;
+            lblFormat.Text = AppStrings.LblFormat;
+            lblPartCount.Text = AppStrings.LblPartCount;
+            lblClipboardMode.Text = AppStrings.LblClipboardMode;
+
+            // Clipboard combo — rebuild items (index را حفظ کن)
+            int prevClipIdx = cmbClipboardMode.SelectedIndex;
+            cmbClipboardMode.Items.Clear();
+            cmbClipboardMode.Items.Add(AppStrings.CmbCopyFile);    // index 0
+            cmbClipboardMode.Items.Add(AppStrings.CmbCopyContent); // index 1
+            cmbClipboardMode.SelectedIndex = prevClipIdx >= 0 ? prevClipIdx : 0;
+
+            // Output group
+            label3.Text = AppStrings.LblOutputName;
+            btnBrowseOutput.Text = AppStrings.BtnBrowseOutput;
+
+            // Main buttons
+            btnCombine.Text = AppStrings.BtnCombine;
+            btnSaveTree.Text = AppStrings.BtnSaveTree;
+
+            // Log label
+            label4.Text = AppStrings.LblLog;
+
+            // Toggle button — نمایش زبان مقابل
+            btnToggleLanguage.Text = AppStrings.Language == AppLanguage.Persian ? "English" : "فارسی";
+
+            // Drop count را هم آپدیت کن
+            UpdateDroppedCount();
+        }
+
+        // ─── دکمه سوئیچ زبان ─────────────────────────────────────────────────
+        private void btnToggleLanguage_Click(object sender, EventArgs e)
+        {
+            AppStrings.Language = AppStrings.Language == AppLanguage.Persian
+                ? AppLanguage.English
+                : AppLanguage.Persian;
+
+            // RTL فقط برای فارسی
+            bool isFa = AppStrings.Language == AppLanguage.Persian;
+            this.RightToLeft = isFa ? RightToLeft.Yes : RightToLeft.No;
+            this.RightToLeftLayout = isFa;
+
+            ApplyStrings();
+        }
+
+        // ─── پر کردن lstFolderFiles بعد از انتخاب پوشه ──────────────────────
         private void RefreshFolderFileList()
         {
             lstFolderFiles.BeginUpdate();
@@ -58,16 +140,15 @@ namespace FileCombiner
             }
 
             lstFolderFiles.EndUpdate();
-            LogMessage($"📂 {allFiles.Count} فایل در پوشه یافت شد.");
+            LogMessage(AppStrings.LogFolderScanned(allFiles.Count));
         }
 
-        // ─── حذف آیتم‌های انتخابی از lstDroppedFiles با کلید Delete ─────────────
+        // ─── حذف آیتم‌های انتخابی از lstDroppedFiles با کلید Delete ─────────
         private void lstDroppedFiles_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.Delete) return;
             if (lstDroppedFiles.SelectedIndices.Count == 0) return;
 
-            // از آخر به اول حذف کن تا index‌ها جابجا نشن
             var indices = lstDroppedFiles.SelectedIndices
                                          .Cast<int>()
                                          .OrderByDescending(i => i)
@@ -82,9 +163,8 @@ namespace FileCombiner
             lstDroppedFiles.EndUpdate();
 
             UpdateDroppedCount();
-            LogMessage($"🗑 {indices.Count} فایل از لیست حذف شد. باقی‌مانده: {_droppedFiles.Count}");
+            LogMessage(AppStrings.LogDeletedFiles(indices.Count, _droppedFiles.Count));
         }
-
 
         // ─── تشخیص حالت کپی انتخابی ─────────────────────────────────────────
         private ClipboardMode CurrentClipboardMode =>
@@ -129,7 +209,6 @@ namespace FileCombiner
             lblDroppedCount.Visible = !isFolderMode;
             btnClearDropList.Visible = !isFolderMode;
 
-            // در حالت Drop جستجوی زیرپوشه معنی ندارد
             chkSearchSubfolders.Enabled = isFolderMode;
         }
 
@@ -153,7 +232,6 @@ namespace FileCombiner
 
             var dropped = (string[])e.Data!.GetData(DataFormats.FileDrop)!;
 
-            // فقط فایل قبول می‌کنیم (نه پوشه) و تکراری نباشه
             var newFiles = dropped
                 .Where(p => File.Exists(p))
                 .Where(p => !_droppedFiles.Contains(p))
@@ -167,7 +245,7 @@ namespace FileCombiner
             lstDroppedFiles.EndUpdate();
 
             UpdateDroppedCount();
-            LogMessage($"✚ {newFiles.Count} فایل اضافه شد. جمع: {_droppedFiles.Count} فایل");
+            LogMessage(AppStrings.LogDropAdded(newFiles.Count, _droppedFiles.Count));
         }
 
         private void btnClearDropList_Click(object sender, EventArgs e)
@@ -175,12 +253,12 @@ namespace FileCombiner
             _droppedFiles.Clear();
             lstDroppedFiles.Items.Clear();
             UpdateDroppedCount();
-            LogMessage("🗑 لیست فایل‌های Drop شده پاک شد.");
+            LogMessage(AppStrings.LogDropCleared);
         }
 
         private void UpdateDroppedCount()
         {
-            lblDroppedCount.Text = $"{_droppedFiles.Count} فایل اضافه شده";
+            lblDroppedCount.Text = AppStrings.LblDropCount(_droppedFiles.Count);
         }
 
         // ─── پیدا کردن مشترک‌ترین پوشه بین فایل‌های Drop شده ───────────────
@@ -218,7 +296,7 @@ namespace FileCombiner
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 txtFolderPath.Text = folderBrowserDialog1.SelectedPath;
-                RefreshFolderFileList();   // ← لیست رو پر کن
+                RefreshFolderFileList();
             }
         }
 
@@ -244,7 +322,8 @@ namespace FileCombiner
                 .ToList();
         }
 
-        private List<string> GetFilesByExtensions(string folderPath, List<string> extensions, SearchOption searchOption)
+        private List<string> GetFilesByExtensions(string folderPath, List<string> extensions,
+            SearchOption searchOption)
         {
             var result = new List<string>();
             foreach (var ext in extensions)
@@ -305,11 +384,11 @@ namespace FileCombiner
                 else
                     copyAction();
 
-                LogMessage("📋 محتوا در Clipboard کپی شد!");
+                LogMessage(AppStrings.MsgClipContent);
             }
             catch (Exception ex)
             {
-                LogMessage($"  ⚠ خطا در کپی محتوا: {ex.Message}");
+                LogMessage(AppStrings.MsgClipContentErr(ex.Message));
             }
         }
 
@@ -331,11 +410,11 @@ namespace FileCombiner
                 else
                     copyAction();
 
-                LogMessage("📋 فایل در Clipboard کپی شد — می‌توانید Paste کنید!");
+                LogMessage(AppStrings.MsgClipFile);
             }
             catch (Exception ex)
             {
-                LogMessage($"  ⚠ خطا در کپی فایل: {ex.Message}");
+                LogMessage(AppStrings.MsgClipFileErr(ex.Message));
             }
         }
 
@@ -353,12 +432,19 @@ namespace FileCombiner
         {
             // اعتبارسنجی مشترک
             if (string.IsNullOrWhiteSpace(txtExtension.Text))
-            { MessageBox.Show("لطفاً حداقل یک پسوند فایل را وارد کنید!", "خطا", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+            {
+                MessageBox.Show(AppStrings.MsgNoExtension, AppStrings.ErrTitle,
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             if (string.IsNullOrWhiteSpace(txtOutputPath.Text))
-            { MessageBox.Show("لطفاً نام فایل خروجی را وارد کنید!", "خطا", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+            {
+                MessageBox.Show(AppStrings.MsgNoOutputPath, AppStrings.ErrTitle,
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-            // ─── جمع‌آوری فایل‌ها بر اساس حالت انتخابی ──────────────────────
             List<string> allFiles;
             string folderPath;
             var extensions = ParseExtensions(txtExtension.Text);
@@ -368,15 +454,24 @@ namespace FileCombiner
             {
                 // حالت ۱: مسیر پوشه
                 if (string.IsNullOrWhiteSpace(txtFolderPath.Text))
-                { MessageBox.Show("لطفاً پوشه را انتخاب کنید!", "خطا", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                {
+                    MessageBox.Show(AppStrings.MsgNoFolder, AppStrings.ErrTitle,
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
                 if (!Directory.Exists(txtFolderPath.Text))
-                { MessageBox.Show("پوشه مورد نظر یافت نشد!", "خطا", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                {
+                    MessageBox.Show(AppStrings.MsgFolderNotFound, AppStrings.ErrTitle,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
                 folderPath = txtFolderPath.Text;
                 bool searchSubfolders = chkSearchSubfolders.Checked;
                 SearchOption searchOption = searchSubfolders
-                    ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+                    ? SearchOption.AllDirectories
+                    : SearchOption.TopDirectoryOnly;
 
                 allFiles = GetFilesByExtensions(folderPath, extensions, searchOption);
             }
@@ -385,8 +480,8 @@ namespace FileCombiner
                 // حالت ۲: فایل‌های Drop شده
                 if (_droppedFiles.Count == 0)
                 {
-                    MessageBox.Show("لیست فایل‌های Drop شده خالی است!\nابتدا فایل‌ها را بکشید و رها کنید.",
-                        "خطا", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(AppStrings.MsgDropEmpty, AppStrings.ErrTitle,
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -399,8 +494,8 @@ namespace FileCombiner
                 if (allFiles.Count == 0)
                 {
                     MessageBox.Show(
-                        $"هیچ فایلی با پسوندهای [{extensionDisplay}] در لیست Drop شده یافت نشد!\n\nفایل‌های موجود در لیست: {_droppedFiles.Count} عدد",
-                        "اطلاعات", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        AppStrings.MsgNoMatchingDropFiles(extensionDisplay, _droppedFiles.Count),
+                        AppStrings.InfoTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -409,8 +504,8 @@ namespace FileCombiner
 
             if (allFiles.Count == 0)
             {
-                MessageBox.Show($"هیچ فایلی با پسوندهای [{extensionDisplay}] یافت نشد!",
-                    "اطلاعات", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(AppStrings.MsgNoMatchingFiles(extensionDisplay),
+                    AppStrings.InfoTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -435,36 +530,39 @@ namespace FileCombiner
                     if (!Path.IsPathRooted(outputPath))
                         outputPath = Path.Combine(folderPath, outputPath);
 
-                    LogMessage("شروع عملیات...");
-                    LogMessage($"حالت ورودی: {(rdoInputFolder.Checked ? "مسیر پوشه" : "فایل‌های Drop شده")}");
-                    LogMessage($"پوشه پایه: {folderPath}");
-                    LogMessage($"پسوندها: {extensionDisplay}");
-                    LogMessage($"فرمت خروجی: {(fmt == OutputFormat.Md ? "Markdown (.md)" : "Text (.txt)")}");
-                    LogMessage($"حالت Clipboard: {cmbClipboardMode.SelectedItem}");
-                    LogMessage($"تعداد فایل‌های انتخاب شده: {selectedFiles.Count} از {allFiles.Count}");
-                    LogMessage($"تعداد قسمت‌های خروجی: {partCount}");
+                    LogMessage(AppStrings.LogStart);
+                    LogMessage(AppStrings.LogInputMode(rdoInputFolder.Checked));
+                    LogMessage(AppStrings.LogBaseFolder(folderPath));
+                    LogMessage(AppStrings.LogExtensions(extensionDisplay));
+                    LogMessage(AppStrings.LogFormat(fmt == OutputFormat.Md ? "Markdown (.md)" : "Text (.txt)"));
+                    LogMessage(AppStrings.LogClipMode(cmbClipboardMode.SelectedItem?.ToString() ?? ""));
+                    LogMessage(AppStrings.LogSelectedFiles(selectedFiles.Count, allFiles.Count));
+                    LogMessage(AppStrings.LogParts(partCount));
                     LogMessage("");
 
                     if (partCount == 1)
                         CombineFiles(folderPath, extensionDisplay, outputPath, selectedFiles, fmt);
                     else
-                        CombineFilesInParts(folderPath, extensionDisplay, outputPath, selectedFiles, partCount, fmt);
+                        CombineFilesInParts(folderPath, extensionDisplay, outputPath,
+                            selectedFiles, partCount, fmt);
 
                     progressBar1.Value = 100;
                     LogMessage("");
-                    LogMessage("✓ عملیات با موفقیت انجام شد!");
+                    LogMessage(AppStrings.LogDone);
 
                     string clipMsg = CurrentClipboardMode == ClipboardMode.CopyFile
-                        ? "📋 فایل نهایی در Clipboard کپی شد!"
-                        : "📋 محتوای فایل در Clipboard کپی شد!";
+                        ? AppStrings.MsgClipFile
+                        : AppStrings.MsgClipContent;
 
                     MessageBox.Show(
-                        $"فایل‌ها با موفقیت ترکیب شدند!\n\nتعداد: {selectedFiles.Count} فایل\nتعداد قسمت‌ها: {partCount}\nفرمت: {(fmt == OutputFormat.Md ? "Markdown" : "Text")}\n\n{clipMsg}",
-                        "موفق", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        AppStrings.MsgSuccess(selectedFiles.Count, partCount,
+                            fmt == OutputFormat.Md ? "Markdown" : "Text", clipMsg),
+                        AppStrings.SuccessTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    if (MessageBox.Show("آیا می‌خواهید پوشه خروجی را باز کنید؟", "سوال",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                        System.Diagnostics.Process.Start("explorer.exe", Path.GetDirectoryName(outputPath)!);
+                    if (MessageBox.Show(AppStrings.MsgOpenOutputFolder, AppStrings.QuestionTitle,
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        System.Diagnostics.Process.Start("explorer.exe",
+                            Path.GetDirectoryName(outputPath)!);
 
                     btnCombine.Enabled = true;
                     btnSaveTree.Enabled = true;
@@ -472,8 +570,8 @@ namespace FileCombiner
             }
             catch (Exception ex)
             {
-                LogMessage($"\n✗ خطا: {ex.Message}");
-                MessageBox.Show($"خطا در انجام عملیات:\n\n{ex.Message}", "خطا",
+                LogMessage(AppStrings.LogError(ex.Message));
+                MessageBox.Show(AppStrings.ErrOperation(ex.Message), AppStrings.ErrTitle,
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 btnCombine.Enabled = true;
                 btnSaveTree.Enabled = true;
@@ -484,17 +582,25 @@ namespace FileCombiner
         private void btnSaveTree_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtFolderPath.Text))
-            { MessageBox.Show("لطفاً ابتدا پوشه را انتخاب کنید!", "خطا", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+            {
+                MessageBox.Show(AppStrings.MsgNoFolder, AppStrings.ErrTitle,
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             if (!Directory.Exists(txtFolderPath.Text))
-            { MessageBox.Show("پوشه مورد نظر یافت نشد!", "خطا", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+            {
+                MessageBox.Show(AppStrings.MsgFolderNotFound, AppStrings.ErrTitle,
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             using (var sfd = new SaveFileDialog())
             {
-                sfd.Title = "ذخیره درخت فایل‌ها";
+                sfd.Title = AppStrings.SaveTreeTitle;
                 sfd.Filter = "Text Files|*.txt|All Files|*.*";
                 sfd.DefaultExt = "txt";
-                sfd.FileName = "file_tree.txt";
+                sfd.FileName = AppStrings.SaveTreeFileName;
 
                 if (sfd.ShowDialog() != DialogResult.OK) return;
 
@@ -507,14 +613,15 @@ namespace FileCombiner
                     string folderPath = txtFolderPath.Text;
                     bool searchSubfolders = chkSearchSubfolders.Checked;
                     SearchOption searchOption = searchSubfolders
-                        ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+                        ? SearchOption.AllDirectories
+                        : SearchOption.TopDirectoryOnly;
 
-                    LogMessage("در حال ساخت درخت فایل‌ها...");
+                    LogMessage(AppStrings.LogBuildingTree);
                     Application.DoEvents();
 
                     var allFiles = Directory.GetFiles(folderPath, "*.*", searchOption)
                                             .OrderBy(f => f).ToList();
-                    LogMessage($"تعداد کل فایل‌ها: {allFiles.Count}");
+                    LogMessage(AppStrings.LogTotalFiles(allFiles.Count));
                     Application.DoEvents();
 
                     using (var writer = new StreamWriter(sfd.FileName, false, Encoding.UTF8))
@@ -534,22 +641,23 @@ namespace FileCombiner
                         writer.WriteLine("//================================================================================");
                     }
 
-                    LogMessage("✓ درخت فایل‌ها با موفقیت ذخیره شد!");
-                    LogMessage($"مسیر: {sfd.FileName}");
+                    LogMessage(AppStrings.LogTreeSaved);
+                    LogMessage(AppStrings.LogTreePath(sfd.FileName));
 
                     MessageBox.Show(
-                        $"درخت فایل‌ها با موفقیت ذخیره شد!\n\nتعداد فایل‌ها: {allFiles.Count}\nمسیر: {sfd.FileName}",
-                        "موفق", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        AppStrings.MsgTreeSaved(allFiles.Count, sfd.FileName),
+                        AppStrings.SuccessTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    if (MessageBox.Show("آیا می‌خواهید فایل خروجی را باز کنید؟", "سوال",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    if (MessageBox.Show(AppStrings.MsgOpenOutputFile, AppStrings.QuestionTitle,
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                         { FileName = sfd.FileName, UseShellExecute = true });
                 }
                 catch (Exception ex)
                 {
-                    LogMessage($"\n✗ خطا: {ex.Message}");
-                    MessageBox.Show($"خطا:\n\n{ex.Message}", "خطا", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    LogMessage(AppStrings.LogError(ex.Message));
+                    MessageBox.Show(AppStrings.ErrOperation(ex.Message), AppStrings.ErrTitle,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
                 {
@@ -565,14 +673,14 @@ namespace FileCombiner
         private void CombineFiles(string folderPath, string extensionDisplay, string outputPath,
             List<string> selectedFiles, OutputFormat fmt)
         {
-            LogMessage("در حال آماده‌سازی فایل‌ها...");
+            LogMessage(AppStrings.LogPreparing);
             Application.DoEvents();
 
             var files = selectedFiles.OrderBy(f => f).ToList();
             var folders = files.Select(f => Path.GetDirectoryName(f)!)
                                .Distinct().OrderBy(f => f).ToList();
 
-            LogMessage($"تعداد {files.Count} فایل انتخاب شده — در {folders.Count} پوشه");
+            LogMessage(AppStrings.LogFilesInFolders(files.Count, folders.Count));
             LogMessage("");
 
             if (fmt == OutputFormat.Md)
@@ -587,15 +695,15 @@ namespace FileCombiner
         private void CombineFilesInParts(string folderPath, string extensionDisplay, string outputPath,
             List<string> selectedFiles, int partCount, OutputFormat fmt)
         {
-            LogMessage("در حال آماده‌سازی فایل‌ها...");
+            LogMessage(AppStrings.LogPreparing);
             Application.DoEvents();
 
             var files = selectedFiles.OrderBy(f => f).ToList();
             long totalSize = files.Sum(f => new FileInfo(f).Length);
             long targetSizePerPart = totalSize / partCount;
 
-            LogMessage($"حجم کل: {FormatFileSize(totalSize)}");
-            LogMessage($"حجم تقریبی هر قسمت: {FormatFileSize(targetSizePerPart)}");
+            LogMessage(AppStrings.LogTotalSize(FormatFileSize(totalSize)));
+            LogMessage(AppStrings.LogPartSize(FormatFileSize(targetSizePerPart)));
             LogMessage("");
 
             var parts = new List<List<string>>();
@@ -618,11 +726,11 @@ namespace FileCombiner
             }
             if (currentPart.Count > 0) parts.Add(currentPart);
 
-            LogMessage($"فایل‌ها به {parts.Count} قسمت تقسیم شدند:");
+            LogMessage(AppStrings.LogSplitResult(parts.Count));
             for (int i = 0; i < parts.Count; i++)
             {
                 long ps = parts[i].Sum(f => new FileInfo(f).Length);
-                LogMessage($"  قسمت {i + 1}: {parts[i].Count} فایل ({FormatFileSize(ps)})");
+                LogMessage(AppStrings.LogPartInfo(i + 1, parts[i].Count, FormatFileSize(ps)));
             }
             LogMessage("");
 
@@ -633,7 +741,7 @@ namespace FileCombiner
             for (int pi = 0; pi < parts.Count; pi++)
             {
                 string partPath = Path.Combine(baseDir, $"{baseName}_{pi + 1}{baseExt}");
-                LogMessage($"در حال ایجاد قسمت {pi + 1} از {parts.Count}...");
+                LogMessage(AppStrings.LogCreatingPart(pi + 1, parts.Count));
 
                 var partFolders = parts[pi]
                     .Select(f => Path.GetDirectoryName(f)!)
@@ -648,11 +756,11 @@ namespace FileCombiner
 
                 progressBar1.Value = (int)((pi + 1) * 100.0 / parts.Count);
                 Application.DoEvents();
-                LogMessage($"✓ قسمت {pi + 1} با موفقیت ایجاد شد");
+                LogMessage(AppStrings.LogPartDone(pi + 1));
                 LogMessage("");
             }
 
-            LogMessage($"حجم کل فایل‌ها: {FormatFileSize(totalSize)}");
+            LogMessage(AppStrings.LogTotalSizeFinal(FormatFileSize(totalSize)));
         }
 
         // ═══════════════════════════════════════════════════════════════════════
@@ -743,7 +851,7 @@ namespace FileCombiner
                     catch (Exception ex)
                     {
                         W($"[ERROR: Unable to read file - {ex.Message}]");
-                        LogMessage($"  ⚠ خطا در خواندن: {ex.Message}");
+                        LogMessage(AppStrings.LogReadError(ex.Message));
                     }
 
                     W("");
@@ -778,7 +886,7 @@ namespace FileCombiner
 
             } // ✅ writer بسته شد
 
-            LogMessage($"حجم قسمت {partNumber}: {FormatFileSize(totalSize)}");
+            LogMessage(AppStrings.LogPartSizeFinal(partNumber, FormatFileSize(totalSize)));
 
             if (partNumber == totalParts)
                 HandleClipboard(outputPath, memoryContent.ToString());
@@ -874,7 +982,7 @@ namespace FileCombiner
                     catch (Exception ex)
                     {
                         W($"ERROR: Unable to read file — {ex.Message}");
-                        LogMessage($"  ⚠ خطا در خواندن: {ex.Message}");
+                        LogMessage(AppStrings.LogReadError(ex.Message));
                     }
 
                     W("```");
@@ -911,14 +1019,14 @@ namespace FileCombiner
 
             } // ✅ writer بسته شد
 
-            LogMessage($"حجم قسمت {partNumber}: {FormatFileSize(totalSize)}");
+            LogMessage(AppStrings.LogPartSizeFinal(partNumber, FormatFileSize(totalSize)));
 
             if (partNumber == totalParts)
                 HandleClipboard(outputPath, memoryContent.ToString());
         }
 
         // ═══════════════════════════════════════════════════════════════════════
-        //  درخت فایل‌ها — TextWriter قبول می‌کنه (StreamWriter و StringWriter)
+        //  درخت فایل‌ها
         // ═══════════════════════════════════════════════════════════════════════
         private void WriteFullDirectoryTree(TextWriter writer, string rootPath, bool recursive)
         {
@@ -973,13 +1081,15 @@ namespace FileCombiner
             foreach (var file in files)
             {
                 var relativePath = Path.GetRelativePath(rootPath, file);
-                var parts = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                var parts = relativePath.Split(Path.DirectorySeparatorChar,
+                                        Path.AltDirectorySeparatorChar);
                 var currentNode = root;
 
                 for (int i = 0; i < parts.Length - 1; i++)
                 {
                     var folderName = parts[i];
-                    var existingFolder = currentNode.SubFolders.FirstOrDefault(f => f.Name == folderName);
+                    var existingFolder = currentNode.SubFolders
+                                            .FirstOrDefault(f => f.Name == folderName);
                     if (existingFolder == null)
                     {
                         existingFolder = new FolderNode

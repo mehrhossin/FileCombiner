@@ -1,5 +1,5 @@
 ﻿//================================================================================
-//Relative Path: Form1.Designer.cs
+// Relative Path: Form1.Designer.cs
 //================================================================================
 
 namespace FileCombiner
@@ -10,7 +10,6 @@ namespace FileCombiner
         ///  Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-
 
         // ─── Declaration ─────────────────────────────────────────────────────
         private System.Windows.Forms.GroupBox groupBox1;
@@ -23,7 +22,7 @@ namespace FileCombiner
         private System.Windows.Forms.Button btnBrowseFolder;
         private System.Windows.Forms.TextBox txtFolderPath;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListBox lstFolderFiles;      // ← جدید
+        private System.Windows.Forms.ListBox lstFolderFiles;
 
         private System.Windows.Forms.Label lblDropHere;
         private System.Windows.Forms.ListBox lstDroppedFiles;
@@ -49,6 +48,7 @@ namespace FileCombiner
 
         private System.Windows.Forms.Button btnCombine;
         private System.Windows.Forms.Button btnSaveTree;
+        private System.Windows.Forms.Button btnToggleLanguage;
 
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.TextBox txtLog;
@@ -56,6 +56,8 @@ namespace FileCombiner
 
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+
+        /// <summary>
         ///  Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -76,7 +78,9 @@ namespace FileCombiner
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources =
+                new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+
             groupBox1 = new GroupBox();
             rdoInputFolder = new RadioButton();
             rdoInputDrop = new RadioButton();
@@ -108,20 +112,21 @@ namespace FileCombiner
             btnBrowseOutput = new Button();
             btnCombine = new Button();
             btnSaveTree = new Button();
+            btnToggleLanguage = new Button();
             progressBar1 = new ProgressBar();
             txtLog = new TextBox();
             label4 = new Label();
             folderBrowserDialog1 = new FolderBrowserDialog();
             saveFileDialog1 = new SaveFileDialog();
+
             groupBox1.SuspendLayout();
             panelFolderMode.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numPartCount).BeginInit();
             groupBox3.SuspendLayout();
             SuspendLayout();
-            // 
-            // groupBox1
-            // 
+
+            // ── groupBox1 ────────────────────────────────────────────────────
             groupBox1.Controls.Add(rdoInputFolder);
             groupBox1.Controls.Add(rdoInputDrop);
             groupBox1.Controls.Add(panelFolderMode);
@@ -134,10 +139,9 @@ namespace FileCombiner
             groupBox1.Size = new Size(760, 290);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
-            groupBox1.Text = "مسیر ورودی";
-            // 
-            // rdoInputFolder
-            // 
+            groupBox1.Text = AppStrings.GrpInput;
+
+            // ── rdoInputFolder ───────────────────────────────────────────────
             rdoInputFolder.AutoSize = true;
             rdoInputFolder.Checked = true;
             rdoInputFolder.Location = new Point(15, 24);
@@ -145,23 +149,21 @@ namespace FileCombiner
             rdoInputFolder.Size = new Size(80, 19);
             rdoInputFolder.TabIndex = 0;
             rdoInputFolder.TabStop = true;
-            rdoInputFolder.Text = "مسیر پوشه";
+            rdoInputFolder.Text = AppStrings.RdoFolder;
             rdoInputFolder.UseVisualStyleBackColor = true;
             rdoInputFolder.CheckedChanged += rdoInputMode_CheckedChanged;
-            // 
-            // rdoInputDrop
-            // 
+
+            // ── rdoInputDrop ─────────────────────────────────────────────────
             rdoInputDrop.AutoSize = true;
             rdoInputDrop.Location = new Point(175, 24);
             rdoInputDrop.Name = "rdoInputDrop";
             rdoInputDrop.Size = new Size(140, 19);
             rdoInputDrop.TabIndex = 1;
-            rdoInputDrop.Text = "کشیدن فایل‌های سورس";
+            rdoInputDrop.Text = AppStrings.RdoDrop;
             rdoInputDrop.UseVisualStyleBackColor = true;
             rdoInputDrop.CheckedChanged += rdoInputMode_CheckedChanged;
-            // 
-            // panelFolderMode
-            // 
+
+            // ── panelFolderMode ──────────────────────────────────────────────
             panelFolderMode.Controls.Add(label1);
             panelFolderMode.Controls.Add(txtFolderPath);
             panelFolderMode.Controls.Add(btnBrowseFolder);
@@ -170,36 +172,32 @@ namespace FileCombiner
             panelFolderMode.Name = "panelFolderMode";
             panelFolderMode.Size = new Size(756, 235);
             panelFolderMode.TabIndex = 2;
-            // 
-            // label1
-            // 
+
+            // ── label1 ───────────────────────────────────────────────────────
             label1.AutoSize = true;
             label1.Location = new Point(15, 10);
             label1.Name = "label1";
             label1.Size = new Size(224, 15);
             label1.TabIndex = 0;
-            label1.Text = "پوشه‌ای که می‌خواهید فایل‌ها را از آن بخوانید:";
-            // 
-            // txtFolderPath
-            // 
+            label1.Text = AppStrings.LblFolderPrompt;
+
+            // ── txtFolderPath ────────────────────────────────────────────────
             txtFolderPath.Location = new Point(142, 30);
             txtFolderPath.Name = "txtFolderPath";
             txtFolderPath.ReadOnly = true;
             txtFolderPath.Size = new Size(598, 23);
             txtFolderPath.TabIndex = 2;
-            // 
-            // btnBrowseFolder
-            // 
+
+            // ── btnBrowseFolder ──────────────────────────────────────────────
             btnBrowseFolder.Location = new Point(15, 28);
             btnBrowseFolder.Name = "btnBrowseFolder";
             btnBrowseFolder.Size = new Size(120, 27);
             btnBrowseFolder.TabIndex = 1;
-            btnBrowseFolder.Text = "انتخاب پوشه...";
+            btnBrowseFolder.Text = AppStrings.BtnBrowseFolder;
             btnBrowseFolder.UseVisualStyleBackColor = true;
             btnBrowseFolder.Click += btnBrowseFolder_Click;
-            // 
-            // lstFolderFiles
-            // 
+
+            // ── lstFolderFiles ───────────────────────────────────────────────
             lstFolderFiles.Font = new Font("Consolas", 8.5F);
             lstFolderFiles.FormattingEnabled = true;
             lstFolderFiles.HorizontalScrollbar = true;
@@ -210,9 +208,8 @@ namespace FileCombiner
             lstFolderFiles.SelectionMode = SelectionMode.MultiExtended;
             lstFolderFiles.Size = new Size(725, 165);
             lstFolderFiles.TabIndex = 3;
-            // 
-            // lblDropHere
-            // 
+
+            // ── lblDropHere ──────────────────────────────────────────────────
             lblDropHere.AllowDrop = true;
             lblDropHere.BackColor = Color.FromArgb(30, 30, 30);
             lblDropHere.BorderStyle = BorderStyle.FixedSingle;
@@ -222,14 +219,13 @@ namespace FileCombiner
             lblDropHere.Name = "lblDropHere";
             lblDropHere.Size = new Size(730, 55);
             lblDropHere.TabIndex = 7;
-            lblDropHere.Text = "📂  فایل‌های سورس را اینجا بکش و ول کن";
+            lblDropHere.Text = AppStrings.LblDropHere;
             lblDropHere.TextAlign = ContentAlignment.MiddleCenter;
             lblDropHere.Visible = false;
             lblDropHere.DragDrop += lblDropHere_DragDrop;
             lblDropHere.DragEnter += lblDropHere_DragEnter;
-            // 
-            // lstDroppedFiles
-            // 
+
+            // ── lstDroppedFiles ──────────────────────────────────────────────
             lstDroppedFiles.Font = new Font("Consolas", 8.5F);
             lstDroppedFiles.FormattingEnabled = true;
             lstDroppedFiles.HorizontalScrollbar = true;
@@ -242,30 +238,27 @@ namespace FileCombiner
             lstDroppedFiles.TabIndex = 8;
             lstDroppedFiles.Visible = false;
             lstDroppedFiles.KeyDown += lstDroppedFiles_KeyDown;
-            // 
-            // lblDroppedCount
-            // 
+
+            // ── lblDroppedCount ──────────────────────────────────────────────
             lblDroppedCount.AutoSize = true;
             lblDroppedCount.Location = new Point(15, 272);
             lblDroppedCount.Name = "lblDroppedCount";
             lblDroppedCount.Size = new Size(94, 15);
             lblDroppedCount.TabIndex = 9;
-            lblDroppedCount.Text = "۰ فایل اضافه شده";
+            lblDroppedCount.Text = AppStrings.LblDropCount(0);
             lblDroppedCount.Visible = false;
-            // 
-            // btnClearDropList
-            // 
+
+            // ── btnClearDropList ─────────────────────────────────────────────
             btnClearDropList.Location = new Point(672, 112);
             btnClearDropList.Name = "btnClearDropList";
             btnClearDropList.Size = new Size(73, 75);
             btnClearDropList.TabIndex = 10;
-            btnClearDropList.Text = "پاک کردن\nهمه";
+            btnClearDropList.Text = AppStrings.BtnClearDrop;
             btnClearDropList.UseVisualStyleBackColor = true;
             btnClearDropList.Visible = false;
             btnClearDropList.Click += btnClearDropList_Click;
-            // 
-            // groupBox2
-            // 
+
+            // ── groupBox2 ────────────────────────────────────────────────────
             groupBox2.Controls.Add(label2);
             groupBox2.Controls.Add(txtExtension);
             groupBox2.Controls.Add(chkSearchSubfolders);
@@ -283,27 +276,24 @@ namespace FileCombiner
             groupBox2.Size = new Size(760, 115);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
-            groupBox2.Text = "تنظیمات";
-            // 
-            // label2
-            // 
+            groupBox2.Text = AppStrings.GrpSettings;
+
+            // ── label2 ───────────────────────────────────────────────────────
             label2.AutoSize = true;
             label2.Location = new Point(15, 25);
             label2.Name = "label2";
             label2.Size = new Size(142, 15);
             label2.TabIndex = 0;
-            label2.Text = "پسوند(ها) — مثال: .cs;.cpp";
-            // 
-            // txtExtension
-            // 
+            label2.Text = AppStrings.LblExtension;
+
+            // ── txtExtension ─────────────────────────────────────────────────
             txtExtension.Location = new Point(188, 22);
             txtExtension.Name = "txtExtension";
             txtExtension.Size = new Size(180, 23);
             txtExtension.TabIndex = 2;
             txtExtension.Text = ".cs";
-            // 
-            // chkSearchSubfolders
-            // 
+
+            // ── chkSearchSubfolders ──────────────────────────────────────────
             chkSearchSubfolders.AutoSize = true;
             chkSearchSubfolders.Checked = true;
             chkSearchSubfolders.CheckState = CheckState.Checked;
@@ -311,11 +301,10 @@ namespace FileCombiner
             chkSearchSubfolders.Name = "chkSearchSubfolders";
             chkSearchSubfolders.Size = new Size(130, 19);
             chkSearchSubfolders.TabIndex = 5;
-            chkSearchSubfolders.Text = "جستجو در زیرپوشه‌ها";
+            chkSearchSubfolders.Text = AppStrings.ChkSubfolders;
             chkSearchSubfolders.UseVisualStyleBackColor = true;
-            // 
-            // chkTree
-            // 
+
+            // ── chkTree ──────────────────────────────────────────────────────
             chkTree.AutoSize = true;
             chkTree.Checked = true;
             chkTree.CheckState = CheckState.Checked;
@@ -323,11 +312,10 @@ namespace FileCombiner
             chkTree.Name = "chkTree";
             chkTree.Size = new Size(125, 19);
             chkTree.TabIndex = 7;
-            chkTree.Text = "نمایش درخت فایل‌ها";
+            chkTree.Text = AppStrings.ChkTree;
             chkTree.UseVisualStyleBackColor = true;
-            // 
-            // chkHaderSumury
-            // 
+
+            // ── chkHaderSumury ───────────────────────────────────────────────
             chkHaderSumury.AutoSize = true;
             chkHaderSumury.Checked = true;
             chkHaderSumury.CheckState = CheckState.Checked;
@@ -335,20 +323,18 @@ namespace FileCombiner
             chkHaderSumury.Name = "chkHaderSumury";
             chkHaderSumury.Size = new Size(132, 19);
             chkHaderSumury.TabIndex = 6;
-            chkHaderSumury.Text = "نمایش هدر و نتایج آخر";
+            chkHaderSumury.Text = AppStrings.ChkHeaderSummary;
             chkHaderSumury.UseVisualStyleBackColor = true;
-            // 
-            // lblFormat
-            // 
+
+            // ── lblFormat ────────────────────────────────────────────────────
             lblFormat.AutoSize = true;
             lblFormat.Location = new Point(15, 88);
             lblFormat.Name = "lblFormat";
             lblFormat.Size = new Size(75, 15);
             lblFormat.TabIndex = 8;
-            lblFormat.Text = "فرمت خروجی:";
-            // 
-            // rdoTxt
-            // 
+            lblFormat.Text = AppStrings.LblFormat;
+
+            // ── rdoTxt ───────────────────────────────────────────────────────
             rdoTxt.AutoSize = true;
             rdoTxt.Checked = true;
             rdoTxt.Location = new Point(110, 86);
@@ -358,9 +344,8 @@ namespace FileCombiner
             rdoTxt.TabStop = true;
             rdoTxt.Text = "Text (.txt)";
             rdoTxt.UseVisualStyleBackColor = true;
-            // 
-            // rdoMd
-            // 
+
+            // ── rdoMd ────────────────────────────────────────────────────────
             rdoMd.AutoSize = true;
             rdoMd.Location = new Point(220, 86);
             rdoMd.Name = "rdoMd";
@@ -368,18 +353,16 @@ namespace FileCombiner
             rdoMd.TabIndex = 10;
             rdoMd.Text = "Markdown (.md)";
             rdoMd.UseVisualStyleBackColor = true;
-            // 
-            // lblPartCount
-            // 
+
+            // ── lblPartCount ─────────────────────────────────────────────────
             lblPartCount.AutoSize = true;
             lblPartCount.Location = new Point(402, 88);
             lblPartCount.Name = "lblPartCount";
             lblPartCount.Size = new Size(164, 15);
             lblPartCount.TabIndex = 4;
-            lblPartCount.Text = "تعداد قسمت‌های خروجی (1-10):";
-            // 
-            // numPartCount
-            // 
+            lblPartCount.Text = AppStrings.LblPartCount;
+
+            // ── numPartCount ─────────────────────────────────────────────────
             numPartCount.Location = new Point(581, 85);
             numPartCount.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
             numPartCount.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
@@ -387,27 +370,24 @@ namespace FileCombiner
             numPartCount.Size = new Size(60, 23);
             numPartCount.TabIndex = 3;
             numPartCount.Value = new decimal(new int[] { 1, 0, 0, 0 });
-            // 
-            // lblClipboardMode
-            // 
+
+            // ── lblClipboardMode ─────────────────────────────────────────────
             lblClipboardMode.AutoSize = true;
             lblClipboardMode.Location = new Point(375, 25);
             lblClipboardMode.Name = "lblClipboardMode";
             lblClipboardMode.Size = new Size(90, 15);
             lblClipboardMode.TabIndex = 11;
-            lblClipboardMode.Text = "حالت Clipboard:";
-            // 
-            // cmbClipboardMode
-            // 
+            lblClipboardMode.Text = AppStrings.LblClipboardMode;
+
+            // ── cmbClipboardMode ─────────────────────────────────────────────
             cmbClipboardMode.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbClipboardMode.FormattingEnabled = true;
             cmbClipboardMode.Location = new Point(465, 22);
             cmbClipboardMode.Name = "cmbClipboardMode";
             cmbClipboardMode.Size = new Size(164, 23);
             cmbClipboardMode.TabIndex = 11;
-            // 
-            // groupBox3
-            // 
+
+            // ── groupBox3 ────────────────────────────────────────────────────
             groupBox3.Controls.Add(label3);
             groupBox3.Controls.Add(txtOutputPath);
             groupBox3.Controls.Add(btnBrowseOutput);
@@ -416,72 +396,75 @@ namespace FileCombiner
             groupBox3.Size = new Size(760, 65);
             groupBox3.TabIndex = 2;
             groupBox3.TabStop = false;
-            groupBox3.Text = "فایل خروجی";
-            // 
-            // label3
-            // 
+            groupBox3.Text = AppStrings.GrpOutput;
+
+            // ── label3 ───────────────────────────────────────────────────────
             label3.AutoSize = true;
             label3.Location = new Point(15, 28);
             label3.Name = "label3";
             label3.Size = new Size(85, 15);
             label3.TabIndex = 0;
-            label3.Text = "نام فایل خروجی:";
-            // 
-            // txtOutputPath
-            // 
+            label3.Text = AppStrings.LblOutputName;
+
+            // ── txtOutputPath ────────────────────────────────────────────────
             txtOutputPath.Location = new Point(121, 25);
             txtOutputPath.Name = "txtOutputPath";
             txtOutputPath.Size = new Size(490, 23);
             txtOutputPath.TabIndex = 4;
             txtOutputPath.Text = "combined_output.txt";
-            // 
-            // btnBrowseOutput
-            // 
+
+            // ── btnBrowseOutput ──────────────────────────────────────────────
             btnBrowseOutput.Location = new Point(618, 23);
             btnBrowseOutput.Name = "btnBrowseOutput";
             btnBrowseOutput.Size = new Size(120, 27);
             btnBrowseOutput.TabIndex = 5;
-            btnBrowseOutput.Text = "انتخاب مسیر...";
+            btnBrowseOutput.Text = AppStrings.BtnBrowseOutput;
             btnBrowseOutput.UseVisualStyleBackColor = true;
             btnBrowseOutput.Click += btnBrowseOutput_Click;
-            // 
-            // btnCombine
-            // 
+
+            // ── btnCombine ───────────────────────────────────────────────────
             btnCombine.BackColor = Color.FromArgb(0, 122, 204);
             btnCombine.FlatStyle = FlatStyle.Flat;
             btnCombine.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnCombine.ForeColor = Color.White;
             btnCombine.Location = new Point(12, 506);
             btnCombine.Name = "btnCombine";
-            btnCombine.Size = new Size(572, 40);
+            btnCombine.Size = new Size(455, 40);
             btnCombine.TabIndex = 3;
-            btnCombine.Text = "ترکیب فایل‌ها";
+            btnCombine.Text = AppStrings.BtnCombine;
             btnCombine.UseVisualStyleBackColor = false;
             btnCombine.Click += btnCombine_Click;
-            // 
-            // btnSaveTree
-            // 
+
+            // ── btnSaveTree ──────────────────────────────────────────────────
             btnSaveTree.BackColor = Color.FromArgb(40, 167, 69);
             btnSaveTree.FlatStyle = FlatStyle.Flat;
             btnSaveTree.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnSaveTree.ForeColor = Color.White;
-            btnSaveTree.Location = new Point(590, 506);
+            btnSaveTree.Location = new Point(473, 506);
             btnSaveTree.Name = "btnSaveTree";
             btnSaveTree.Size = new Size(182, 40);
             btnSaveTree.TabIndex = 11;
-            btnSaveTree.Text = "💾 ذخیره درخت";
+            btnSaveTree.Text = AppStrings.BtnSaveTree;
             btnSaveTree.UseVisualStyleBackColor = false;
             btnSaveTree.Click += btnSaveTree_Click;
-            // 
-            // progressBar1
-            // 
+
+            // ── btnToggleLanguage ────────────────────────────────────────────
+            btnToggleLanguage.Location = new Point(661, 506);
+            btnToggleLanguage.Name = "btnToggleLanguage";
+            btnToggleLanguage.Size = new Size(111, 40);
+            btnToggleLanguage.TabIndex = 12;
+            btnToggleLanguage.Text = "English";
+            btnToggleLanguage.FlatStyle = FlatStyle.Flat;
+            btnToggleLanguage.UseVisualStyleBackColor = true;
+            btnToggleLanguage.Click += btnToggleLanguage_Click;
+
+            // ── progressBar1 ─────────────────────────────────────────────────
             progressBar1.Location = new Point(12, 554);
             progressBar1.Name = "progressBar1";
             progressBar1.Size = new Size(760, 23);
             progressBar1.TabIndex = 4;
-            // 
-            // txtLog
-            // 
+
+            // ── txtLog ───────────────────────────────────────────────────────
             txtLog.BackColor = Color.Black;
             txtLog.Font = new Font("Consolas", 9F);
             txtLog.ForeColor = Color.Lime;
@@ -492,29 +475,27 @@ namespace FileCombiner
             txtLog.ScrollBars = ScrollBars.Vertical;
             txtLog.Size = new Size(760, 158);
             txtLog.TabIndex = 5;
-            // 
-            // label4
-            // 
+
+            // ── label4 ───────────────────────────────────────────────────────
             label4.AutoSize = true;
             label4.Location = new Point(12, 583);
             label4.Name = "label4";
             label4.Size = new Size(41, 15);
             label4.TabIndex = 6;
-            label4.Text = "گزارش:";
-            // 
-            // saveFileDialog1
-            // 
+            label4.Text = AppStrings.LblLog;
+
+            // ── saveFileDialog1 ──────────────────────────────────────────────
             saveFileDialog1.DefaultExt = "txt";
             saveFileDialog1.Filter = "Text Files|*.txt|All Files|*.*";
-            // 
-            // Form1
-            // 
+
+            // ── Form1 ────────────────────────────────────────────────────────
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 771);
             Controls.Add(label4);
             Controls.Add(txtLog);
             Controls.Add(progressBar1);
+            Controls.Add(btnToggleLanguage);
             Controls.Add(btnSaveTree);
             Controls.Add(btnCombine);
             Controls.Add(groupBox3);
@@ -528,7 +509,8 @@ namespace FileCombiner
             RightToLeft = RightToLeft.Yes;
             RightToLeftLayout = true;
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "مهر (ترکیب‌کننده فایل‌ها) نسخه 1.7 ";
+            Text = AppStrings.AppTitle;
+
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             panelFolderMode.ResumeLayout(false);
@@ -543,8 +525,5 @@ namespace FileCombiner
         }
 
         #endregion
-
-
-
     }
 }
